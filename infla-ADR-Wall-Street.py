@@ -170,6 +170,8 @@ if tickers_input:
             }
             response = requests.get(f'https://api.stockanalysis.com/api/symbol/s/{ticker}/history', params=params, headers={'accept': '*/*'})
             stock_data = pd.DataFrame(response.json())
+            print(stock_data.head())
+            print(stock_data.columns)
 
             if stock_data.empty:
                 st.error(f"No se encontraron datos para el ticker {ticker}. Verifica que el ticker sea correcto y esté activo.")
