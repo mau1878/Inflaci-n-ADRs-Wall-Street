@@ -202,7 +202,7 @@ if tickers_input:
             st.write(stock_data)
 
             # Calcular 'Inflation_Adjusted_Close'
-            stock_data['Inflation_Adjusted_Close'] = stock_data['a'] / stock_data['Cumulative_Inflation'] (
+            stock_data['Inflation_Adjusted_Close'] = stock_data['a'] / stock_data['Cumulative_Inflation'] * (
                 stock_data['Cumulative_Inflation'].iloc[-1] 
             )
 
