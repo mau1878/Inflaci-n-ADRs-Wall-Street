@@ -67,13 +67,13 @@ if ticker:
     daily_cpi = daily_cpi.loc[start_date:end_date]
     adjusted_stock_data = adjust_for_inflation(stock_data, daily_cpi)
     
-    # Ensure both stock_data and adjusted_stock_data are pandas Series and have the same index
+    # Ensure stock_data and adjusted_stock_data are 1-dimensional
     if isinstance(stock_data, pd.DataFrame):
-        stock_data = stock_data.squeeze()  # Convert to Series if it's a DataFrame with one column
+        stock_data = stock_data.iloc[:, 0]  # Select the first column if there are multiple columns
     if isinstance(adjusted_stock_data, pd.DataFrame):
-        adjusted_stock_data = adjusted_stock_data.squeeze()  # Convert to Series if it's a DataFrame with one column
+        adjusted_stock_data = adjusted_stock_data.iloc[:, 0]  # Select the first column if there are multiple columns
     
-    # Check that both Series have the same index
+    # Check index alignment
     adjusted_stock_data = adjusted_stock_data.reindex(stock_data.index)
     
     # Plot original and adjusted stock prices
