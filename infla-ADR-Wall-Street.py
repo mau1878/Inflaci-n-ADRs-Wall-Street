@@ -272,6 +272,7 @@ if tickers_input:
           var_name = ticker_var_map[ticker]
           stock_data_dict_nominal[var_name] = stock_data['Adj Close']
           stock_data_dict_adjusted[var_name] = stock_data['Inflation_Adjusted_Close']
+          print(stock_data.head())
 
           if show_percentage or show_percentage_from_recent:
               if show_percentage_from_recent:
