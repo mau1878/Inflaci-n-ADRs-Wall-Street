@@ -176,7 +176,7 @@ if tickers_input:
                 continue
 
             # Procesar las fechas
-            stock_data['Date'] = pd.to_datetime(stock_data['date'])  # Ajusta el nombre de la columna si es necesario
+            stock_data['Date'] = pd.to_datetime(stock_data['t'])  # Ajusta el nombre de la columna si es necesario
             stock_data.set_index('Date', inplace=True)
 
             # Asegurarse que el índice sea de tipo datetime y tz-naive
@@ -190,12 +190,12 @@ if tickers_input:
             stock_data.dropna(subset=['Cumulative_Inflation'], inplace=True)
 
             # Calcular 'Inflation_Adjusted_Close'
-            stock_data['Inflation_Adjusted_Close'] = stock_data['close'] * (
+            stock_data['Inflation_Adjusted_Close'] = stock_data['a'] * (
                 stock_data['Cumulative_Inflation'].iloc[-1] / stock_data['Cumulative_Inflation']
             )
 
             # Almacenar los datos en los diccionarios
-            stock_data_dict_nominal[ticker] = stock_data['close']
+            stock_data_dict_nominal[ticker] = stock_data['a']
             stock_data_dict_adjusted[ticker] = stock_data['Inflation_Adjusted_Close']
 
             # Graficar los precios ajustados por inflación
