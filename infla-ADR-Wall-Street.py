@@ -82,7 +82,3 @@ if ticker:
         'Original Price': stock_data,
         'Inflation Adjusted Price': adjusted_stock_data
     }))
-
-        'Inflation Adjusted Price': adjusted_stock_data
-    }))
-
