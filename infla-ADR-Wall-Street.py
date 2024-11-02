@@ -237,7 +237,7 @@ if tickers_input:
       try:
           # Descargar datos históricos de la acción desde la fecha seleccionada
           stock_data = yf.download(ticker, start=plot_start_date, end=daily_cpi.index.max().date())
-          print(stock_data.head())
+          print(stock_data.columns)
 
           if stock_data.empty:
               st.error(f"No se encontraron datos para el ticker {ticker}. Verifica que el ticker sea correcto y esté activo.")
