@@ -35,8 +35,12 @@ def adjust_for_inflation(stock_data, cpi_data):
     else:
         stock_data.index = stock_data.index.tz_convert("UTC")
 
+    # Ensure both stock_data and cpi_data have the same timezone
+    cpi_data.index = cpi_data.index.tz_localize("UTC") if cpi_data.index.tz is None else cpi_data.index.tz_convert("UTC")
+    
     # Reindex CPI data to align with the stock data index (date range)
     cpi_data = cpi_data.reindex(stock_data.index, method='ffill')
+
     
     # Adjust stock prices for inflation
     adjusted_prices = stock_data / cpi_data['CPI']
