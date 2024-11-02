@@ -255,7 +255,7 @@ if tickers_input:
           # Verificar si el ticker termina con '.BA' para ajustar por inflación
 
           # Unir con los datos de inflación
-          print(stock_data.head(30))
+          
           stock_data = stock_data.join(daily_cpi, how='left')
           # Rellenar hacia adelante cualquier dato de inflación faltante
           stock_data['Cumulative_Inflation'].ffill(inplace=True)
@@ -676,3 +676,4 @@ if selected_ticker:
   except Exception as e:
       st.error(f"Ocurrió un error al procesar el ticker {ticker}: {e}")
       logger.error(f"Error al procesar el ticker {ticker}: {e}")
+print(stock_data.head(30))
