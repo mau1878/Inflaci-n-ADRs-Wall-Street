@@ -253,21 +253,19 @@ if tickers_input:
           stock_data = ajustar_precios_por_splits(stock_data, ticker)
 
           # Verificar si el ticker termina con '.BA' para ajustar por inflación
-          if ticker.endswith('.BA'):
-              # Unir con los datos de inflación
-              stock_data = stock_data.join(daily_cpi, how='left')
-              # Rellenar hacia adelante cualquier dato de inflación faltante
-              stock_data['Cumulative_Inflation'].ffill(inplace=True)
-              # Eliminar cualquier fila restante con NaN en 'Cumulative_Inflation'
-              stock_data.dropna(subset=['Cumulative_Inflation'], inplace=True)
 
-              # Calcular 'Inflation_Adjusted_Close'
-              stock_data['Inflation_Adjusted_Close'] = stock_data['Adj Close'] * (
-                  stock_data['Cumulative_Inflation'].iloc[-1] / stock_data['Cumulative_Inflation']
-              )
-          else:
-              # No ajustar por inflación
-              stock_data['Inflation_Adjusted_Close'] = stock_data['Adj Close']
+          # Unir con los datos de inflación
+          stock_data = stock_data.join(daily_cpi, how='left')
+          # Rellenar hacia adelante cualquier dato de inflación faltante
+          stock_data['Cumulative_Inflation'].ffill(inplace=True)
+          # Eliminar cualquier fila restante con NaN en 'Cumulative_Inflation'
+          stock_data.dropna(subset=['Cumulative_Inflation'], inplace=True)
+
+          # Calcular 'Inflation_Adjusted_Close'
+          stock_data['Inflation_Adjusted_Close'] = stock_data['Adj Close'] * (
+              stock_data['Cumulative_Inflation'].iloc[-1] / stock_data['Cumulative_Inflation']
+          )
+
 
           # Almacenar los datos en los diccionarios
           var_name = ticker_var_map[ticker]
