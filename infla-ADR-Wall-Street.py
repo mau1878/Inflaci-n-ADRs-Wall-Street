@@ -17,27 +17,27 @@ def load_cpi_data():
     if 'Date' not in cpi.columns or 'CPI_MoM' not in cpi.columns:
         st.error("El archivo CSV debe contener las columnas 'Date' y 'CPI_MoM'.")
         st.stop()
-    
+
     # Convertir la columna 'Date' a datetime
     cpi['Date'] = pd.to_datetime(cpi['Date'], format='%Y-%m-%d')
     cpi.set_index('Date', inplace=True)
-    
+
     # Calcular la inflación acumulada de manera inversa
     # Invertir el orden de las filas
     cpi_reversed = cpi[::-1]
-    
+
     # Calcular el producto acumulado
     cpi_reversed['Cumulative_Inflation'] = (1 + cpi_reversed['CPI_MoM']).cumprod()
-    
+
     # Invertir de nuevo para obtener el orden original
     cpi['Cumulative_Inflation'] = cpi_reversed['Cumulative_Inflation'][::-1]
-    
+
     # Resamplear a diario y rellenar
     daily = cpi['Cumulative_Inflation'].resample('D').interpolate(method='linear')
-    
+
     # Asegurar que el índice sea tz-naive
     daily = daily.tz_localize(None)
-    
+
     return daily
 
 
@@ -202,9 +202,7 @@ if tickers_input:
             st.write(stock_data)
 
             # Calcular 'Inflation_Adjusted_Close'
-            stock_data['Inflation_Adjusted_Close'] = stock_data['a'] / stock_data['Cumulative_Inflation'] * (
-                stock_data['Cumulative_Inflation'].iloc[-1] 
-            )
+            stock_data['Inflation_Adjusted_Close'] = stock_data['a'] * stock_data['Cumulative_Inflation']
 
             # Almacenar los datos en los diccionarios
             stock_data_dict_nominal[ticker] = stock_data['a']
@@ -229,4 +227,3 @@ if tickers_input:
                       yaxis_title='Precio Ajustado (ARS)',
                       template='plotly_white')
     st.plotly_chart(fig)
-
