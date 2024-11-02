@@ -73,13 +73,16 @@ if ticker:
     if isinstance(adjusted_stock_data, pd.DataFrame):
         adjusted_stock_data = adjusted_stock_data.iloc[:, 0]  # Select the first column if there are multiple columns
     
-    # Check index alignment
-    adjusted_stock_data = adjusted_stock_data.reindex(stock_data.index)
+    # Align adjusted_stock_data with stock_data index and fill missing values
+    adjusted_stock_data = adjusted_stock_data.reindex(stock_data.index).fillna(method='ffill')
     
     # Plot original and adjusted stock prices
     st.write(f"Adjusted stock price of {ticker} for U.S. inflation:")
     st.line_chart(pd.DataFrame({
         'Original Price': stock_data,
+        'Inflation Adjusted Price': adjusted_stock_data
+    }))
+
         'Inflation Adjusted Price': adjusted_stock_data
     }))
 
