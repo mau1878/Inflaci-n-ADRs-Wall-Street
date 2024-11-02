@@ -191,6 +191,7 @@ if tickers_input:
             stock_data['Cumulative_Inflation'].ffill(inplace=True)
             # Eliminar cualquier fila restante con NaN en 'Cumulative_Inflation'
             stock_data.dropna(subset=['Cumulative_Inflation'], inplace=True)
+            st.write(stock_data)
 
             # Calcular 'Inflation_Adjusted_Close'
             stock_data['Inflation_Adjusted_Close'] = stock_data['a'] * (
