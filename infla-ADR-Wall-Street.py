@@ -17,21 +17,29 @@ def load_cpi_data():
     if 'Date' not in cpi.columns or 'CPI_MoM' not in cpi.columns:
         st.error("El archivo CSV debe contener las columnas 'Date' y 'CPI_MoM'.")
         st.stop()
-
+    
     # Convertir la columna 'Date' a datetime
     cpi['Date'] = pd.to_datetime(cpi['Date'], format='%Y-%m-%d')
     cpi.set_index('Date', inplace=True)
-
-    # Calcular la inflación acumulada
-    cpi['Cumulative_Inflation'] = (1 + cpi['CPI_MoM']).cumprod()
-
+    
+    # Calcular la inflación acumulada de manera inversa
+    # Invertir el orden de las filas
+    cpi_reversed = cpi[::-1]
+    
+    # Calcular el producto acumulado
+    cpi_reversed['Cumulative_Inflation'] = (1 + cpi_reversed['CPI_MoM']).cumprod()
+    
+    # Invertir de nuevo para obtener el orden original
+    cpi['Cumulative_Inflation'] = cpi_reversed['Cumulative_Inflation'][::-1]
+    
     # Resamplear a diario y rellenar
     daily = cpi['Cumulative_Inflation'].resample('D').interpolate(method='linear')
     
     # Asegurar que el índice sea tz-naive
     daily = daily.tz_localize(None)
-
+    
     return daily
+
 
 daily_cpi = load_cpi_data()
 
