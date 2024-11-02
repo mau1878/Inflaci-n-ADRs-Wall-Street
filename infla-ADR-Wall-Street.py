@@ -169,7 +169,7 @@ if tickers_input:
                 'period': 'Daily',
             }
             response = requests.get(f'https://api.stockanalysis.com/api/symbol/s/{ticker}/history', params=params, headers={'accept': '*/*'})
-            stock_data = pd.DataFrame(response.json()['Data'])
+            stock_data = pd.DataFrame(response.json()['data'])
             st.write(stock_data)
             print(stock_data.head())
             print(stock_data.columns)
