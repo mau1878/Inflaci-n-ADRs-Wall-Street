@@ -28,13 +28,20 @@ def get_stock_data(ticker, start_date, end_date):
 def adjust_for_inflation(stock_data, cpi_data):
     # Normalize CPI to 1 at the latest date for easier adjustment
     cpi_data = cpi_data / cpi_data.iloc[-1]
-    
+
+    # Convert stock_data index to UTC if needed
+    if stock_data.index.tz is None:
+        stock_data.index = stock_data.index.tz_localize("UTC")
+    else:
+        stock_data.index = stock_data.index.tz_convert("UTC")
+
     # Reindex CPI data to align with the stock data index (date range)
     cpi_data = cpi_data.reindex(stock_data.index, method='ffill')
     
     # Adjust stock prices for inflation
     adjusted_prices = stock_data / cpi_data['CPI']
     return adjusted_prices
+
 
 
 # Streamlit app
