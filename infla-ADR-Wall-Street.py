@@ -85,7 +85,7 @@ def load_cpi_data():
       st.stop()
       
   # Convertir la columna 'Date' a datetime
-  cpi['Date'] = pd.to_datetime(cpi['Date'], format='%d/%m/%Y')
+  cpi['Date'] = pd.to_datetime(cpi['Date'], format='%Y-%m-%d')
   cpi.set_index('Date', inplace=True)
   
   # Calcular la inflación acumulada
