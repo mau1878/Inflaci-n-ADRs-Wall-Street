@@ -24,13 +24,18 @@ def get_stock_data(ticker, start_date, end_date):
     stock_data = yf.download(ticker, start=start_date, end=end_date)
     return stock_data['Adj Close']
 
-# Adjust stock prices for inflation
+# Align stock and CPI data on dates and adjust stock prices for inflation
 def adjust_for_inflation(stock_data, cpi_data):
     # Normalize CPI to 1 at the latest date for easier adjustment
     cpi_data = cpi_data / cpi_data.iloc[-1]
-    # Align stock and CPI data on dates and adjust stock prices for inflation
+    
+    # Reindex CPI data to align with the stock data index (date range)
+    cpi_data = cpi_data.reindex(stock_data.index, method='ffill')
+    
+    # Adjust stock prices for inflation
     adjusted_prices = stock_data / cpi_data['CPI']
     return adjusted_prices
+
 
 # Streamlit app
 st.title("Stock Price Adjustment for U.S. Inflation")
