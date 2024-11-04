@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 import plotly.graph_objects as go
 from datetime import timedelta
+import numpy as np
 
 # Cargar datos de inflación desde el archivo CSV
 @st.cache_data
@@ -27,7 +28,11 @@ def load_cpi_data():
     cpi_reversed = cpi[::-1]
 
     # Calcular el producto acumulado
-    cpi_reversed['Cumulative_Inflation'] = (1 + cpi_reversed['CPI_MoM']).cumprod()
+    cpi_reversed['Cumulative_Inflation'] = (1 + cpi_reversed['CPI_MoM']).cumprod().shift(-1)
+
+    # Normalizar para que el valor más reciente sea 1
+    most_recent_value = cpi_reversed['Cumulative_Inflation'].iloc[0]  # valor en la fecha más reciente
+    cpi_reversed['Cumulative_Inflation'] /= most_recent_value  # normalizar
 
     # Invertir de nuevo para obtener el orden original
     cpi['Cumulative_Inflation'] = cpi_reversed['Cumulative_Inflation'][::-1]
@@ -209,20 +214,31 @@ if tickers_input:
             stock_data_dict_adjusted[ticker] = stock_data['Inflation_Adjusted_Close']
 
             # Graficar los precios ajustados por inflación
+            # Graficar los precios ajustados por inflación
             if show_percentage:
                 # Calcular variación porcentual
                 stock_data['Inflation_Adjusted_Percentage'] = (
-                    stock_data['Inflation_Adjusted_Close'] / stock_data['Inflation_Adjusted_Close'].iloc[0] - 1
-                ) * 100
-                fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Inflation_Adjusted_Percentage'], mode='lines', name=f'{ticker} - Ajustado (%)'))
+                                                                      stock_data['Inflation_Adjusted_Close'] /
+                                                                      stock_data['Inflation_Adjusted_Close'].iloc[0] - 1
+                                                              ) * 100
+                fig.add_trace(
+                    go.Scatter(x=stock_data.index, y=stock_data['Inflation_Adjusted_Percentage'], mode='lines',
+                               name=f'{ticker} - Ajustado (%)'))
             else:
-                fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Inflation_Adjusted_Close'], mode='lines', name=f'{ticker} - Ajustado'))
+                fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['Inflation_Adjusted_Close'], mode='lines',
+                                         name=f'{ticker} - Ajustado por inflación'))
+                fig.add_trace(go.Scatter(x=stock_data.index, y=stock_data['a'], mode='lines',
+                                         name=f'{ticker} - Sin ajustar por inflación'))
+                fig.add_trace(go.Scatter(x=stock_data.index,
+                                         y=[np.mean(stock_data['Inflation_Adjusted_Close'])] * len(stock_data.index),
+                                         mode='lines', name=f'{ticker} - Ajustado (Media)'))
+
 
         except Exception as e:
             st.error(f"Error al procesar el ticker {ticker}: {e}")
 
     # Mostrar el gráfico final
-    fig.update_layout(title='Valores de acciones ajustados por inflación',
+    fig.update_layout(title='Valores de acciones estadounidenses o ADRs ajustados por inflación de EEUU (y ajustados por dividendos o splits)',
                       xaxis_title='Fecha',
                       yaxis_title='Precio Ajustado (ARS)',
                       template='plotly_white')
